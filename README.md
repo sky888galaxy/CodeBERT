@@ -1,2 +1,3 @@
-# CodeBERT
-A malicious code detection system based on CodeBERT, and it will have many other features in the future.
+# CodeBERT for Malicious Code Detection
+
+An exploratory project applying pretrained code models to malicious code detection.
